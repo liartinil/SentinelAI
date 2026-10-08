@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#020a14">
+  <title>SentinelAI v4 — Cybersecurity Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="grid-bg"></div><div class="glow glow-a"></div><div class="glow glow-b"></div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <div id="authGate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-brand"><div class="brand-mark"><span>◉</span></div><div><div class="brand-name">Sentinel<span>AI</span></div><div class="brand-tag">SECURE ACCESS</div></div></div>
+      <h2 id="authTitle">Welcome back</h2><p id="authSubtitle">Sign in to access your private security dashboard.</p>
+      <div class="auth-tabs"><button id="loginTab" class="auth-tab active" type="button">Login</button><button id="registerTab" class="auth-tab" type="button">Register</button></div>
+      <form id="authForm" class="auth-form">
+        <div id="nameField" class="field hidden"><label>Name</label><input id="authName" autocomplete="name" placeholder="Your name"></div>
+        <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+        <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Minimum 8 characters" required></div>
+        <button id="authSubmit" class="primary-btn wide" type="submit">Login</button>
+      </form>
+      <div id="authMessage" class="auth-message"></div><p class="auth-note">Accounts and scan history are stored locally in SentinelAI's SQLite database.</p>
+    </div>
+  </div>
+
+  <div id="drawerShade" class="drawer-shade hidden"></div>
+  <aside id="profileDrawer" class="profile-drawer" aria-hidden="true">
+    <div class="drawer-head"><div><div class="panel-kicker">ACCOUNT CENTER</div><h2>Profile & Security</h2></div><button id="closeDrawer" class="icon-btn" type="button">×</button></div>
+    <div class="drawer-user"><div id="drawerAvatar" class="drawer-avatar">SA</div><div><strong id="drawerName">User</strong><span id="drawerEmail">—</span><small id="drawerSince">Member since —</small></div></div>
+    <div class="drawer-stats"><div><span>Total scans</span><strong id="drawerTotal">0</strong></div><div><span>Avg score</span><strong id="drawerAverage">0</strong></div><div><span>Best score</span><strong id="drawerBest">0</strong></div><div><span>High risk</span><strong id="drawerHigh">0</strong></div></div>
+
+    <div class="drawer-section"><h3>Edit profile</h3><form id="profileForm" class="drawer-form"><label>Name<input id="profileNameInput" required minlength="2"></label><label>Email<input id="profileEmailInput" type="email" required></label><button class="primary-btn" type="submit">Save profile</button></form><div id="profileMessage" class="drawer-message"></div></div>
+    <div class="drawer-section"><h3>Change password</h3><form id="passwordChangeForm" class="drawer-form"><label>Current password<input id="currentPassword" type="password" required></label><label>New password<input id="newPassword" type="password" minlength="8" required></label><label>Confirm new password<input id="confirmPassword" type="password" minlength="8" required></label><button class="secondary-btn" type="submit">Update password</button></form><div id="passwordMessage" class="drawer-message"></div></div>
+    <div class="drawer-section"><h3>Data</h3><button id="exportCsvButton" class="secondary-btn wide" type="button">Export scan history (CSV)</button></div>
+    <button id="drawerLogout" class="danger-btn wide" type="button">Logout</button>
+  </aside>
+
+  <div id="compareModal" class="modal-wrap hidden"><div class="modal-card"><div class="drawer-head"><div><div class="panel-kicker">SCAN COMPARISON</div><h2>What changed?</h2></div><button id="closeCompare" class="icon-btn" type="button">×</button></div><div id="compareContent"></div></div></div>
+
+  <aside id="notificationDrawer" class="notification-drawer" aria-hidden="true"><div class="drawer-head"><div><div class="panel-kicker">ALERT CENTER</div><h2>Notifications</h2></div><button id="closeNotifications" class="icon-btn" type="button">×</button></div><div id="notificationDrawerList" class="notification-list"></div></aside>
+
+  <div id="remediationModal" class="modal-wrap hidden"><div class="modal-card remediation-card"><div class="drawer-head"><div><div class="panel-kicker">REMEDIATION ASSISTANT</div><h2>Recommended fixes</h2></div><button id="closeRemediation" class="icon-btn" type="button">×</button></div><div id="remediationContent"></div></div></div>
+
+  <div class="app-frame">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard"><div class="brand-mark"><span>◉</span></div><div class="brand-copy"><div class="brand-name">Sentinel<span>AI</span></div><div class="brand-tag">CYBER DEFENSE</div></div></a>
+      <nav class="nav-menu">
+        <a class="nav-item active" href="#dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
+        <a class="nav-item" href="#website-scan"><span class="nav-icon">◎</span><span>Website Scan</span></a>
+        <a class="nav-item" href="#domain-intel"><span class="nav-icon">◈</span><span>Domain Intelligence</span></a>
+        <a class="nav-item" href="#phishing"><span class="nav-icon">⌁</span><span>Phishing Detector</span></a>
+        <a class="nav-item" href="#password"><span class="nav-icon">▣</span><span>Password Analyzer</span></a>
+        <a class="nav-item" href="#assistant"><span class="nav-icon">✦</span><span>AI Assistant</span></a>
+        <a class="nav-item" href="#assets-section"><span class="nav-icon">◉</span><span>Asset Monitor</span></a>
+        <a class="nav-item" href="#email-tools"><span class="nav-icon">✉</span><span>Email Analyzer</span></a>
+        <a class="nav-item" href="#file-tools"><span class="nav-icon">◆</span><span>File Scanner</span></a>
+        <a class="nav-item" href="#history-section"><span class="nav-icon">≡</span><span>Reports</span></a>
+      </nav>
+      <div class="sidebar-foot"><div class="system-chip"><i></i> System online</div><div class="version">SentinelAI v5.0</div></div>
+    </aside>
+
+    <main class="workspace" id="dashboard">
+      <header class="topbar"><div><div class="eyebrow">AI-POWERED WEB THREAT DETECTION</div><h1>Security Dashboard</h1></div><div class="top-actions"><div class="status-dot"><span></span> Live monitoring</div><button id="notificationButton" class="notification-button" type="button" title="Notifications">🔔<span id="notificationCount" class="notification-count hidden">0</span></button><button id="profileButton" class="profile-button" type="button"><div id="avatar" class="avatar">SA</div><div class="profile-copy"><b id="profileName">User</b><span id="profileEmail">—</span></div><span class="chev">›</span></button></div></header>
+
+      <section class="account-strip"><div><span>Total scans</span><strong id="statTotal">0</strong></div><div><span>Average score</span><strong id="statAverage">0</strong></div><div><span>High risk</span><strong id="statHigh">0</strong></div><div><span>Best score</span><strong id="statBest">0</strong></div></section>
+
+      <section class="hero-panel" id="website-scan">
+        <div class="scan-side"><div class="panel-kicker">ADVANCED WEBSITE SECURITY SCANNER</div><h2>Analyze a website in seconds.</h2><p class="lead">Passive checks for HTTPS, TLS, security headers, CORS, redirects, mixed content, robots.txt, sitemap and browser-facing configuration.</p>
+          <form id="scanForm" class="scan-bar"><span class="scan-prefix">⌕</span><input id="scanUrl" type="text" placeholder="https://example.com" autocomplete="off" required><button class="primary-btn" type="submit">Scan</button></form><p class="microcopy">Only scan websites you own or have permission to assess.</p>
+          <div class="quick-stats"><div><span>Mode</span><strong>Passive</strong></div><div><span>Engine</span><strong>Sentinel Core 5</strong></div><div><span>Reports</span><strong>PDF + CSV</strong></div></div>
+        </div>
+        <div class="security-overview"><div class="score-card"><div class="small-label">Security Score</div><div class="score-ring" id="scoreRing" style="--score:0"><div class="score-center"><strong id="scoreValue">0</strong><span>/100</span></div></div><div id="scoreRisk" class="score-caption">Ready to scan</div></div><div class="status-card"><div class="status-head"><span>Security checks</span><span class="live-pill">LIVE</span></div><div id="securityChecklist" class="security-list"><div class="security-row"><span><i class="dot green"></i> SSL / HTTPS</span><b>Ready</b></div><div class="security-row"><span><i class="dot amber"></i> Security Headers</span><b>Ready</b></div><div class="security-row"><span><i class="dot blue"></i> TLS Certificate</span><b>Ready</b></div><div class="security-row"><span><i class="dot purple"></i> CORS / Content</span><b>Ready</b></div><div class="security-row"><span><i class="dot pink"></i> Risk Level</span><b>—</b></div></div></div></div>
+      </section>
+      <div id="scanResult" class="scan-result hidden"></div>
+
+      <section class="feature-grid feature-grid-4">
+        <article class="tool-card blue-card" id="domain-intel"><div class="tool-top"><div class="tool-icon">◈</div><span class="tool-badge">DNS LOOKUP</span></div><h3>Domain Intelligence</h3><p>Inspect public DNS records, mail records, SPF, DMARC and reverse DNS.</p><form id="domainForm" class="compact-form"><input id="domainInput" placeholder="example.com" required><button type="submit">Lookup</button></form><div id="domainResult" class="mini-result empty-state">No domain checked yet.</div></article>
+        <article class="tool-card pink-card" id="phishing"><div class="tool-top"><div class="tool-icon hook">⌁</div><span class="tool-badge">URL ANALYSIS</span></div><h3>Phishing Detection</h3><p>Analyze suspicious links and identify common phishing indicators.</p><form id="phishForm" class="compact-form"><input id="phishUrl" placeholder="Paste a suspicious URL" required><button type="submit">Analyze</button></form><div id="phishResult" class="mini-result empty-state">No URL analyzed yet.</div></article>
+        <article class="tool-card cyan-card" id="password"><div class="tool-top"><div class="tool-icon lock">▣</div><span class="tool-badge">LOCAL CHECK</span></div><h3>Password Strength</h3><p>Measure password strength, entropy, character variety and common patterns.</p><form id="passwordForm" class="compact-form"><input id="passwordInput" type="password" placeholder="Enter password" required><button type="submit">Check</button></form><div id="passwordResult" class="mini-result empty-state">No password analyzed yet.</div></article>
+        <article class="tool-card violet-card" id="assistant"><div class="tool-top"><div class="tool-icon bot">✦</div><span class="tool-badge">AI SECURITY</span></div><h3>AI Assistant</h3><p>Ask SentinelAI about defensive web security concepts and hardening.</p><form id="assistantForm" class="assistant-form"><textarea id="assistantQuestion" placeholder="Ask a security question…" required></textarea><button type="submit">Ask SentinelAI</button></form><div id="assistantResult" class="mini-result empty-state">Try: “What is Content-Security-Policy?”</div></article>
+      </section><br>
+
+      <section class="monitor-grid" id="assets-section">
+        <article class="data-panel monitor-panel">
+          <div class="panel-title-row"><div><div class="panel-kicker">LIVE WEBSITE MONITORING</div><h3>Asset Monitor</h3></div><span class="panel-symbol">◉</span></div>
+          <p class="lead compact-lead">Add websites you own or manage. SentinelAI checks uptime in the background while the app is running and creates notifications for outages and slow responses.</p>
+          <form id="assetForm" class="asset-form">
+            <input id="assetName" placeholder="Asset name" required>
+            <input id="assetUrl" placeholder="https://example.com" required>
+            <select id="assetInterval"><option value="5">Every 5 min</option><option value="15">Every 15 min</option><option value="60" selected>Every hour</option><option value="360">Every 6 hours</option><option value="1440">Daily</option></select>
+            <button class="primary-btn" type="submit">Add Monitor</button>
+          </form>
+          <div id="assetList" class="asset-list"><div class="no-data">No monitored assets yet.</div></div>
+        </article>
+        <article class="data-panel notifications-panel">
+          <div class="panel-title-row"><div><div class="panel-kicker">ALERT CENTER</div><h3>Notifications</h3></div><button id="markNotificationsRead" class="report-btn" type="button">Mark read</button></div>
+          <div id="notificationList" class="notification-list"><div class="no-data">No notifications.</div></div>
+        </article>
+      </section>
+
+      <section class="feature-grid feature-grid-2 security-tools-grid">
+        <article class="tool-card blue-card" id="email-tools">
+          <div class="tool-top"><div class="tool-icon">✉</div><span class="tool-badge">MAIL AUTH</span></div>
+          <h3>Email Header Analyzer</h3><p>Paste raw email headers to inspect SPF, DKIM, DMARC, routing hops and common spoofing indicators.</p>
+          <form id="emailHeaderForm" class="assistant-form"><textarea id="emailHeadersInput" class="large-textarea" placeholder="Paste raw email headers here…" required></textarea><button type="submit">Analyze Headers</button></form>
+          <div id="emailHeaderResult" class="mini-result empty-state">No email headers analyzed yet.</div>
+        </article>
+        <article class="tool-card cyan-card" id="file-tools">
+          <div class="tool-top"><div class="tool-icon">◆</div><span class="tool-badge">STATIC FILE CHECK</span></div>
+          <h3>File Hash Scanner</h3><p>Calculate SHA-256/MD5 fingerprints and inspect simple static indicators without executing the file. Maximum 10 MB.</p>
+          <form id="fileScanForm" class="file-form"><input id="fileInput" type="file" required><button type="submit">Analyze File</button></form>
+          <div id="fileScanResult" class="mini-result empty-state">No file analyzed yet.</div>
+        </article>
+      </section>
+
+      <section class="lower-grid"><article class="data-panel" id="threats-section"><div class="panel-title-row"><div><div class="panel-kicker">THREAT INTELLIGENCE</div><h3>Risk Overview & Score Trend</h3></div><span class="panel-symbol">◫</span></div><div id="threats" class="threat-bars"></div><div id="trendChart" class="trend-chart"></div></article>
+      <article class="data-panel" id="history-section"><div class="panel-title-row"><div><div class="panel-kicker">RECENT ACTIVITY</div><h3>Scan History & Reports</h3></div><button id="exportHistoryTop" class="report-btn" type="button">Export CSV</button></div><div id="history" class="history-list"></div></article></section>
+      <footer class="footer"><span>SentinelAI v5</span><span>Defensive cybersecurity platform • Passive analysis only</span></footer>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
